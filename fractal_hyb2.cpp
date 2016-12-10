@@ -27,7 +27,9 @@ Ethan Coyle
 #include <cstdlib>
 #include <cmath>
 #include <sys/time.h>
+#include <mpi.h>
 #include "cs43805351.h"
+
 
 static const double Delta = 0.005491;
 static const double xMid = 0.745796;
