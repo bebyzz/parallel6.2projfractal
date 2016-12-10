@@ -1,0 +1,53 @@
+#!/bin/bash
+#SBATCH -A CS4380_CS5351 # account name
+#SBATCH -J p6_fractal    # job name
+#SBATCH -o p6_fractal.%j # name of the output and error file
+#SBATCH -N 1             # total number of nodes requested
+#SBATCH -n 1             # total number of tasks requested
+#SBATCH -p gpu           # queue name
+#SBATCH -t 00:06:00      # expected maximum runtime (hh:mm:ss)
+
+./fractal_hyb1 500 0 640
+./fractal_hyb1 500 16 624
+./fractal_hyb1 500 32 608
+./fractal_hyb1 500 48 592
+./fractal_hyb1 500 64 576
+./fractal_hyb1 500 80 560
+./fractal_hyb1 500 96 544
+./fractal_hyb1 500 112 528
+./fractal_hyb1 500 128 512
+./fractal_hyb1 500 144 496
+./fractal_hyb1 500 160 480
+./fractal_hyb1 500 176 464
+./fractal_hyb1 500 192 448
+./fractal_hyb1 500 208 432
+./fractal_hyb1 500 224 416
+./fractal_hyb1 500 240 400
+./fractal_hyb1 500 256 384
+./fractal_hyb1 500 272 368
+./fractal_hyb1 500 288 352
+./fractal_hyb1 500 304 336
+./fractal_hyb1 500 320 320
+./fractal_hyb1 500 336 304
+./fractal_hyb1 500 352 288
+./fractal_hyb1 500 368 272
+./fractal_hyb1 500 384 256
+./fractal_hyb1 500 400 240
+./fractal_hyb1 500 416 224
+./fractal_hyb1 500 432 208
+./fractal_hyb1 500 448 192
+./fractal_hyb1 500 464 176
+./fractal_hyb1 500 480 160
+./fractal_hyb1 500 496 144
+./fractal_hyb1 500 512 128
+./fractal_hyb1 500 528 112
+./fractal_hyb1 500 544 96
+./fractal_hyb1 500 560 80
+./fractal_hyb1 500 576 64
+./fractal_hyb1 500 592 48
+./fractal_hyb1 500 608 32
+./fractal_hyb1 500 624 16
+./fractal_hyb1 500 640 0
+
+date
+
