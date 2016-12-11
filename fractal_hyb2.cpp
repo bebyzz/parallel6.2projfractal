@@ -47,7 +47,7 @@ int main(int argc, char *argv[])
 
 	MPI_Init(NULL,NULL);
 	MPI_Comm_size(MPI_COMM_WORLD, &comm_sz);
-	MPI_Comm_RANK(MPI_COMM_WORLD, &my_rank);
+	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
 
   	if (my_rank == 0){
 		printf("Fractal v1.5 [Hybrid2]\n");
@@ -85,7 +85,9 @@ int main(int argc, char *argv[])
 
 	const int from_frame = my_rank * frames;
 	const int mid_frame = from_frame + gpu_frames;
-	const int to_frame = mid_frame + cpu_frame;
+	const int to_frame = mid_frame + cpu_frames;
+if(my_rank == 0)
+	printf("1");
 
 	const int picsize = frames * width * width;
 	const int masterpicsize = comm_sz * frames * width * width;
@@ -96,22 +98,25 @@ int main(int argc, char *argv[])
 	unsigned char* pic_d = GPU_Init(gpu_frames * width * width * sizeof(unsigned char));
 	if(my_rank == 0){
 		master_pic = new unsigned char[frames*comm_sz * width * width];
-	}
-
+	}	
 	//sync up all the processes
 	MPI_Barrier(MPI_COMM_WORLD);
   	// start time
   	struct timeval start, end;
   	gettimeofday(&start, NULL);
+if(my_rank == 0)
+	printf("2");
 
   	// the following call should asynchronously compute the given number of frames on the GPU
   	GPU_Exec(from_frame, mid_frame, width, pic_d);
 
   	// the following code should compute the remaining frames on the CPU
+if(my_rank == 0)
+	printf("3");
 
 	/* insert an OpenMP parallelized FOR loop with 16 threads, default(none), and a cyclic schedule */
-	#pragma omp parallel for default(none) shared(pic, width, gpu_frames, frames) num_threads(16) schedule(static, 1)
-	for (int frame = mid_frmae; frame < to_frame; frame++) {
+	#pragma omp parallel for default(none) shared(pic, width, frames, my_rank) num_threads(16) schedule(static, 1)
+	for (int frame = mid_frame; frame < to_frame; frame++) {
     	double delta = Delta * pow(.99, frame + 1);
     	const double xMin = xMid - delta;
     	const double yMin = yMid - delta;
@@ -131,16 +136,22 @@ int main(int argc, char *argv[])
           			x = x2 - y2 + cx;
           			depth--;
         		} while ((depth > 0) && ((x2 + y2) < 5.0));
-        		pic[(frame - (my_size * my_rank))* width * width + row * width + col] = (unsigned char)depth;
+        		pic[(frame - (frames * my_rank))* width * width + row * width + col] = (unsigned char)depth;
       		}
     	}
   	}
+if(my_rank == 0)
+	printf("4");
 
 	// the following call copies the GPU's result into the beginning of the CPU's pic array
 	GPU_Fini(gpu_frames * width * width * sizeof(unsigned char), pic, pic_d);
+if(my_rank == 0)
+	printf("5");
 
 	// gathers the result from all processes
 	MPI_Gather(pic, picsize, MPI_UNSIGNED_CHAR, master_pic,masterpicsize, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
+if(my_rank == 0)
+	printf("6");
 
 	// end time
 	gettimeofday(&end, NULL);
@@ -152,7 +163,7 @@ int main(int argc, char *argv[])
     	for (int frame = 0; frame < frames; frame++) {
     		char name[32];
     		sprintf(name, "fractal%d.bmp", frame + 10000);
-     		writeBMP(width, width, &pic[frame * width * width], name)
+     		writeBMP(width, width, &pic[frame * width * width], name);
 		}
 	}
 	if(my_rank == 0){
