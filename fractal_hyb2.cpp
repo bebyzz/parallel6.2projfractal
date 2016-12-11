@@ -23,7 +23,6 @@ Author:
 Yinebeb Zenaw
 Ethan Coyle
 */
-
 #include <cstdlib>
 #include <cmath>
 #include <sys/time.h>
@@ -41,14 +40,12 @@ void GPU_Fini(const int size, unsigned char pic[], unsigned char pic_d[]);
 
 int main(int argc, char *argv[])
 {
-	
+	MPI_Init(NULL,NULL);
 	int comm_sz;
 	int my_rank;
 
-	MPI_Init(NULL,NULL);
 	MPI_Comm_size(MPI_COMM_WORLD, &comm_sz);
 	MPI_Comm_rank(MPI_COMM_WORLD, &my_rank);
-
   	if (my_rank == 0){
 		printf("Fractal v1.5 [Hybrid2]\n");
 	}
@@ -81,8 +78,11 @@ int main(int argc, char *argv[])
 	if(my_rank == 0){
   		printf("using %d processes to compute %d frames of %d by %d fractal (%d CPU frames and %d GPU frames)\n"
 			,comm_sz , frames*comm_sz, width, width, cpu_frames*comm_sz, gpu_frames*comm_sz);
+		printf("this is a test\n");
 	}
-
+if(my_rank == 0){
+	printf("process 1.1");
+}
 	const int from_frame = my_rank * frames;
 	const int mid_frame = from_frame + gpu_frames;
 	const int to_frame = mid_frame + cpu_frames;
