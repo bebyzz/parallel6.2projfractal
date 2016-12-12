@@ -149,7 +149,13 @@ if(my_rank == 0)
 	printf("5");
 
 	// gathers the result from all processes
-	MPI_Gather(pic, picsize, MPI_UNSIGNED_CHAR, master_pic,masterpicsize, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
+	if(my_rank == 0){
+		MPI_Gather(pic, picsize, MPI_UNSIGNED_CHAR, master_pic,masterpicsize, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
+	}
+	else{
+		MPI_Gather(pic, picsize, MPI_UNSIGNED_CHAR, NULL,masterpicsize, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
+	}
+
 if(my_rank == 0)
 	printf("6");
 
