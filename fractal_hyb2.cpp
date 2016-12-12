@@ -81,13 +81,13 @@ int main(int argc, char *argv[])
 		printf("this is a test\n");
 	}
 if(my_rank == 0){
-	printf("process 1.1");
+	printf("1");
 }
 	const int from_frame = my_rank * frames;
 	const int mid_frame = from_frame + gpu_frames;
 	const int to_frame = mid_frame + cpu_frames;
 if(my_rank == 0)
-	printf("1");
+	printf("1.1");
 
 	const int picsize = frames * width * width;
 	const int masterpicsize = comm_sz * frames * width * width;
