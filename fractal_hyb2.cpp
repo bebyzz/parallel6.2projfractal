@@ -75,44 +75,53 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "error: total number of frames must be at least 1\n"); 
 		MPI_Finalize();
 		exit(-1);}
-	if(my_rank == 0){
+//	if(my_rank == 0){
   		printf("using %d processes to compute %d frames of %d by %d fractal (%d CPU frames and %d GPU frames)\n"
 			,comm_sz , frames*comm_sz, width, width, cpu_frames*comm_sz, gpu_frames*comm_sz);
 		printf("this is a test\n");
-	}
-if(my_rank == 0){
+//	}
 	printf("1");
-}
+
 	const int from_frame = my_rank * frames;
 	const int mid_frame = from_frame + gpu_frames;
 	const int to_frame = mid_frame + cpu_frames;
+printf("rank %d: rendering frames %d -> %d\n", my_rank, from_frame, to_frame);
+
 if(my_rank == 0)
-	printf("1.1");
+	printf("1.1\n");
 
 	const int picsize = frames * width * width;
+printf("rank %d: picsize is %d\n", picsize);
 	const int masterpicsize = comm_sz * frames * width * width;
+printf("rank %d: masterpicsize is %d\n", masterpicsize);
 
   	// allocate picture arrays
  	unsigned char* master_pic;
 	unsigned char* pic = new unsigned char[frames * width * width];
+printf("rank %d: pic[] allocated as char[%d]\n", my_rank, frames*width*width);
 	unsigned char* pic_d = GPU_Init(gpu_frames * width * width * sizeof(unsigned char));
+printf("rank %d: picd[] allocated on GPU as char[%d]\n", my_rank, gpu_frames*width*width*sizeof(unsigned char));
+
 	if(my_rank == 0){
 		master_pic = new unsigned char[frames*comm_sz * width * width];
+printf("im the masta bitch. allocated master_pic[] as unsigned char[%d];\n", frames*comm_sz * width * width);
 	}	
+else{ printf("not masta, didnt allocate for master_pic\n");}
 	//sync up all the processes
 	MPI_Barrier(MPI_COMM_WORLD);
   	// start time
   	struct timeval start, end;
   	gettimeofday(&start, NULL);
 if(my_rank == 0)
-	printf("2");
+	printf("2\n");
 
   	// the following call should asynchronously compute the given number of frames on the GPU
   	GPU_Exec(from_frame, mid_frame, width, pic_d);
-
+printf("rank %d: called GPUExec(%d, %d, %d, pic_d);\n", my_rank, from_frame, mid_frame);
   	// the following code should compute the remaining frames on the CPU
 if(my_rank == 0)
-	printf("3");
+	printf("3\n");
+
 
 	/* insert an OpenMP parallelized FOR loop with 16 threads, default(none), and a cyclic schedule */
 	#pragma omp parallel for default(none) shared(pic, width, frames, my_rank) num_threads(16) schedule(static, 1)
@@ -163,7 +172,7 @@ if(my_rank == 0)
 	gettimeofday(&end, NULL);
 	double runtime = end.tv_sec + end.tv_usec / 1000000.0 - start.tv_sec - start.tv_usec / 1000000.0;
 	printf("compute time: %.4f s\n", runtime);
-
+		MPI_Finalize();
 	// verify result by writing frames to BMP files
 	if ((width <= 400) && (frames <= 30)) {
     	for (int frame = 0; frame < frames; frame++) {
@@ -172,9 +181,9 @@ if(my_rank == 0)
      		writeBMP(width, width, &pic[frame * width * width], name);
 		}
 	}
-	if(my_rank == 0){
+//	if(my_rank == 0){
 		delete [] master_pic;
-	}
+//	}
   	delete [] pic;
 	
   return 0;

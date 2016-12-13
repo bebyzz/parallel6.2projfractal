@@ -39,12 +39,11 @@ static __global__
 void FractalKernel(const int from_frame, const int to_frame, const int width, unsigned char pic_d[])
 {
     // kernel code goes in here; use the same parallelization approach as in the previous project
-    const int offset = from_frame*width*width;
-    const int idx = threadIdx.x + blockIdx.x * blockDim.x + offset;//idx now range from from_framefirstpx -> to_framelastpx; +offset to bring idx up to the first pixel count.
-    if (idx < ((to_frame) * (width * width))) {
+    const int idx = threadIdx.x + blockIdx.x * blockDim.x;//idx now range from from_framefirstpx -> to_framelastpx; +offset to bring idx up to the first pixel count.
+    if (idx < ((to_frame-from_frame) * (width * width))) {
         const int col = idx % width;
         const int row = (idx / width) % width;
-        const int frame = idx / (width * width);
+        const int frame = idx / (width * width)+from_frame;;
 
         const float delta = Delta * pow(.99, frame+1) ;
         const float xMin = xMid - delta;
@@ -64,7 +63,7 @@ void FractalKernel(const int from_frame, const int to_frame, const int width, un
         	x = x2 - y2 + cx;
           	depth--;
 	    } while ((depth > 0) && ((x2 + y2) < 5.0));
-        pic_d[idx-offset] = (unsigned char)depth;//idx now range from 0 - to_frame;
+        pic_d[idx] = (unsigned char)depth;//idx now range from 0 - to_frame;
     }
 }
 
@@ -88,9 +87,12 @@ void GPU_Exec(const int from_frame, const int to_frame, const int width, unsigne
 void GPU_Fini(const int size, unsigned char pic[], unsigned char pic_d[])
 {
 	// copy the pixel data to the CPU and dealloca
-	if(cudaSuccess != cudaMemcpy( pic, pic_d, size , cudaMemcpyDeviceToHost)) {
+if(!size)
+return;
+	if(cudaSuccess != cudaMemcpy( pic, pic_d, size, cudaMemcpyDeviceToHost)) {
 		fprintf(stderr, "could not copy GPU->CPU\n"); 
 		exit(-1);
 	}	
+	cudaFree(pic_d);
 }
 
