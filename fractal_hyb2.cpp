@@ -75,38 +75,27 @@ int main(int argc, char *argv[])
 		fprintf(stderr, "error: total number of frames must be at least 1\n"); 
 		MPI_Finalize();
 		exit(-1);}
-//	if(my_rank == 0){
+	if(my_rank == 0){
   		printf("using %d processes to compute %d frames of %d by %d fractal (%d CPU frames and %d GPU frames)\n"
 			,comm_sz , frames*comm_sz, width, width, cpu_frames*comm_sz, gpu_frames*comm_sz);
 		printf("this is a test\n");
-//	}
+	}
 	printf("1");
 
 	const int from_frame = my_rank * frames;
 	const int mid_frame = from_frame + gpu_frames;
 	const int to_frame = mid_frame + cpu_frames;
-printf("rank %d: rendering frames %d -> %d\n", my_rank, from_frame, to_frame);
+printf("rank %d: rendering frames %d up-to %d\nwith %d gpu_frames and %d cpu_frames", my_rank, from_frame, to_frame, gpu_frames, cpu_frames);
 
 if(my_rank == 0)
 	printf("1.1\n");
 
-	const int picsize = frames * width * width;
-printf("rank %d: picsize is %d\n", picsize);
-	const int masterpicsize = comm_sz * frames * width * width;
-printf("rank %d: masterpicsize is %d\n", masterpicsize);
-
   	// allocate picture arrays
- 	unsigned char* master_pic;
-	unsigned char* pic = new unsigned char[frames * width * width];
+	unsigned char* pic = new unsigned char[frames* comm_sz* width * width];
 printf("rank %d: pic[] allocated as char[%d]\n", my_rank, frames*width*width);
 	unsigned char* pic_d = GPU_Init(gpu_frames * width * width * sizeof(unsigned char));
 printf("rank %d: picd[] allocated on GPU as char[%d]\n", my_rank, gpu_frames*width*width*sizeof(unsigned char));
 
-	if(my_rank == 0){
-		master_pic = new unsigned char[frames*comm_sz * width * width];
-printf("im the masta bitch. allocated master_pic[] as unsigned char[%d];\n", frames*comm_sz * width * width);
-	}	
-else{ printf("not masta, didnt allocate for master_pic\n");}
 	//sync up all the processes
 	MPI_Barrier(MPI_COMM_WORLD);
   	// start time
@@ -117,15 +106,16 @@ if(my_rank == 0)
 
   	// the following call should asynchronously compute the given number of frames on the GPU
   	GPU_Exec(from_frame, mid_frame, width, pic_d);
-printf("rank %d: called GPUExec(%d, %d, %d, pic_d);\n", my_rank, from_frame, mid_frame);
+printf("rank %d: called GPUExec(%d, %d, %d, pic_d);\n", my_rank, from_frame, mid_frame, width);
   	// the following code should compute the remaining frames on the CPU
-if(my_rank == 0)
-	printf("3\n");
+//if(my_rank == 0)
+	printf("rank:%d-----------------------3\n", my_rank);
 
 
 	/* insert an OpenMP parallelized FOR loop with 16 threads, default(none), and a cyclic schedule */
-	#pragma omp parallel for default(none) shared(pic, width, frames, my_rank) num_threads(16) schedule(static, 1)
+	#pragma omp parallel for default(none) shared(pic, width, frames, my_rank, gpu_frames) num_threads(16) schedule(static, 1)
 	for (int frame = mid_frame; frame < to_frame; frame++) {
+printf("rank %d: computing CPU frame #%d", my_rank, frame);
     	double delta = Delta * pow(.99, frame + 1);
     	const double xMin = xMid - delta;
     	const double yMin = yMid - delta;
@@ -145,7 +135,7 @@ if(my_rank == 0)
           			x = x2 - y2 + cx;
           			depth--;
         		} while ((depth > 0) && ((x2 + y2) < 5.0));
-        		pic[(frame - (frames * my_rank))* width * width + row * width + col] = (unsigned char)depth;
+        		pic[frame * width * width + row * width + col] = (unsigned char)depth;
       		}
     	}
   	}
@@ -157,13 +147,11 @@ if(my_rank == 0)
 if(my_rank == 0)
 	printf("5");
 
-	// gathers the result from all processes
-	if(my_rank == 0){
-		MPI_Gather(pic, picsize, MPI_UNSIGNED_CHAR, master_pic,masterpicsize, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
-	}
-	else{
-		MPI_Gather(pic, picsize, MPI_UNSIGNED_CHAR, NULL,masterpicsize, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
-	}
+	// gathers the result from all processe
+	unsigned char* picg;
+	if(!my_rank)
+		picg = new unsigned char[comm_sz * frames * width * width];
+		MPI_Gather(pic, (frames* width * width), MPI_UNSIGNED_CHAR, picg, frames*width*width, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
 
 if(my_rank == 0)
 	printf("6");
@@ -181,9 +169,6 @@ if(my_rank == 0)
      		writeBMP(width, width, &pic[frame * width * width], name);
 		}
 	}
-//	if(my_rank == 0){
-		delete [] master_pic;
-//	}
   	delete [] pic;
 	
   return 0;

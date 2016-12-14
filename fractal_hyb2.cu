@@ -43,9 +43,9 @@ void FractalKernel(const int from_frame, const int to_frame, const int width, un
     if (idx < ((to_frame-from_frame) * (width * width))) {
         const int col = idx % width;
         const int row = (idx / width) % width;
-        const int frame = idx / (width * width)+from_frame;;
+        const int frame = idx / (width * width);
 
-        const float delta = Delta * pow(.99, frame+1) ;
+        const float delta = Delta * pow(.99, from_frame+frame+1) ;
         const float xMin = xMid - delta;
         const float yMin = yMid - delta;
         const float dw = 2.0 * delta / width;
@@ -87,8 +87,7 @@ void GPU_Exec(const int from_frame, const int to_frame, const int width, unsigne
 void GPU_Fini(const int size, unsigned char pic[], unsigned char pic_d[])
 {
 	// copy the pixel data to the CPU and dealloca
-if(!size)
-return;
+printf("GPU_Fini(%d, %p, %p);", size, pic, pic_d);
 	if(cudaSuccess != cudaMemcpy( pic, pic_d, size, cudaMemcpyDeviceToHost)) {
 		fprintf(stderr, "could not copy GPU->CPU\n"); 
 		exit(-1);
