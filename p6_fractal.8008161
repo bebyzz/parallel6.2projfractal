@@ -1,0 +1,122 @@
+TACC: Starting up job 8008161
+TACC: Setting up parallel environment for MVAPICH2+mpispawn.
+TACC: Starting parallel tasks...
+Fractal v1.5 [Hybrid2]
+using 4 processes to compute 640 frames of 500 by 500 fractal (0 CPU frames and 640 GPU frames)
+compute time: 0.1264 s
+compute time: 0.1397 s
+compute time: 0.2058 s
+compute time: 0.2156 s
+ 
+TACC: Shutdown complete. Exiting.
+TACC: Starting up job 8008161
+TACC: Setting up parallel environment for MVAPICH2+mpispawn.
+TACC: Starting parallel tasks...
+Fractal v1.5 [Hybrid2]
+using 4 processes to compute 640 frames of 500 by 500 fractal (64 CPU frames and 576 GPU frames)
+compute time: 0.2759 s
+compute time: 0.3655 s
+compute time: 0.4507 s
+compute time: 0.4606 s
+ 
+TACC: Shutdown complete. Exiting.
+TACC: Starting up job 8008161
+TACC: Setting up parallel environment for MVAPICH2+mpispawn.
+TACC: Starting parallel tasks...
+Fractal v1.5 [Hybrid2]
+using 4 processes to compute 640 frames of 500 by 500 fractal (128 CPU frames and 512 GPU frames)
+compute time: 0.5035 s
+compute time: 0.6823 s
+compute time: 0.7692 s
+compute time: 0.7790 s
+ 
+TACC: Shutdown complete. Exiting.
+TACC: Starting up job 8008161
+TACC: Setting up parallel environment for MVAPICH2+mpispawn.
+TACC: Starting parallel tasks...
+Fractal v1.5 [Hybrid2]
+using 4 processes to compute 640 frames of 500 by 500 fractal (192 CPU frames and 448 GPU frames)
+compute time: 0.7380 s
+compute time: 0.9104 s
+compute time: 0.9980 s
+compute time: 1.0077 s
+ 
+TACC: Shutdown complete. Exiting.
+TACC: Starting up job 8008161
+TACC: Setting up parallel environment for MVAPICH2+mpispawn.
+TACC: Starting parallel tasks...
+Fractal v1.5 [Hybrid2]
+using 4 processes to compute 640 frames of 500 by 500 fractal (256 CPU frames and 384 GPU frames)
+compute time: 0.9122 s
+compute time: 1.1516 s
+compute time: 1.2399 s
+compute time: 1.2497 s
+ 
+TACC: Shutdown complete. Exiting.
+TACC: Starting up job 8008161
+TACC: Setting up parallel environment for MVAPICH2+mpispawn.
+TACC: Starting parallel tasks...
+Fractal v1.5 [Hybrid2]
+using 4 processes to compute 640 frames of 500 by 500 fractal (320 CPU frames and 320 GPU frames)
+compute time: 1.1130 s
+compute time: 1.3003 s
+compute time: 1.3895 s
+compute time: 1.3992 s
+ 
+TACC: Shutdown complete. Exiting.
+TACC: Starting up job 8008161
+TACC: Setting up parallel environment for MVAPICH2+mpispawn.
+TACC: Starting parallel tasks...
+Fractal v1.5 [Hybrid2]
+using 4 processes to compute 640 frames of 500 by 500 fractal (384 CPU frames and 256 GPU frames)
+compute time: 1.2321 s
+compute time: 1.5051 s
+compute time: 1.5951 s
+compute time: 1.6048 s
+ 
+TACC: Shutdown complete. Exiting.
+TACC: Starting up job 8008161
+TACC: Setting up parallel environment for MVAPICH2+mpispawn.
+TACC: Starting parallel tasks...
+Fractal v1.5 [Hybrid2]
+using 4 processes to compute 640 frames of 500 by 500 fractal (448 CPU frames and 192 GPU frames)
+compute time: 1.3287 s
+compute time: 1.7747 s
+compute time: 1.8672 s
+compute time: 1.8770 s
+ 
+TACC: Shutdown complete. Exiting.
+TACC: Starting up job 8008161
+TACC: Setting up parallel environment for MVAPICH2+mpispawn.
+TACC: Starting parallel tasks...
+Fractal v1.5 [Hybrid2]
+using 4 processes to compute 640 frames of 500 by 500 fractal (512 CPU frames and 128 GPU frames)
+compute time: 1.5395 s
+compute time: 1.9171 s
+compute time: 2.0085 s
+compute time: 2.0182 s
+ 
+TACC: Shutdown complete. Exiting.
+TACC: Starting up job 8008161
+TACC: Setting up parallel environment for MVAPICH2+mpispawn.
+TACC: Starting parallel tasks...
+Fractal v1.5 [Hybrid2]
+using 4 processes to compute 640 frames of 500 by 500 fractal (576 CPU frames and 64 GPU frames)
+compute time: 1.7624 s
+compute time: 2.1482 s
+compute time: 2.2395 s
+compute time: 2.2493 s
+ 
+TACC: Shutdown complete. Exiting.
+TACC: Starting up job 8008161
+TACC: Setting up parallel environment for MVAPICH2+mpispawn.
+TACC: Starting parallel tasks...
+Fractal v1.5 [Hybrid2]
+using 4 processes to compute 640 frames of 500 by 500 fractal (640 CPU frames and 0 GPU frames)
+compute time: 1.9042 s
+compute time: 2.3830 s
+compute time: 2.4764 s
+compute time: 2.4861 s
+ 
+TACC: Shutdown complete. Exiting.
+Tue Dec 13 23:02:58 CST 2016
