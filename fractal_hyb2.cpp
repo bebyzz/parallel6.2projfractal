@@ -78,44 +78,32 @@ int main(int argc, char *argv[])
 	if(my_rank == 0){
   		printf("using %d processes to compute %d frames of %d by %d fractal (%d CPU frames and %d GPU frames)\n"
 			,comm_sz , frames*comm_sz, width, width, cpu_frames*comm_sz, gpu_frames*comm_sz);
-		printf("this is a test\n");
 	}
-	printf("1");
 
 	const int from_frame = my_rank * frames;
 	const int mid_frame = from_frame + gpu_frames;
 	const int to_frame = mid_frame + cpu_frames;
-printf("rank %d: rendering frames %d up-to %d\nwith %d gpu_frames and %d cpu_frames", my_rank, from_frame, to_frame, gpu_frames, cpu_frames);
 
-if(my_rank == 0)
-	printf("1.1\n");
 
   	// allocate picture arrays
 	unsigned char* pic = new unsigned char[frames* comm_sz* width * width];
-printf("rank %d: pic[] allocated as char[%d]\n", my_rank, frames*width*width);
 	unsigned char* pic_d = GPU_Init(gpu_frames * width * width * sizeof(unsigned char));
-printf("rank %d: picd[] allocated on GPU as char[%d]\n", my_rank, gpu_frames*width*width*sizeof(unsigned char));
 
 	//sync up all the processes
 	MPI_Barrier(MPI_COMM_WORLD);
   	// start time
   	struct timeval start, end;
   	gettimeofday(&start, NULL);
-if(my_rank == 0)
-	printf("2\n");
 
   	// the following call should asynchronously compute the given number of frames on the GPU
   	GPU_Exec(from_frame, mid_frame, width, pic_d);
-printf("rank %d: called GPUExec(%d, %d, %d, pic_d);\n", my_rank, from_frame, mid_frame, width);
   	// the following code should compute the remaining frames on the CPU
 //if(my_rank == 0)
-	printf("rank:%d-----------------------3\n", my_rank);
 
 
 	/* insert an OpenMP parallelized FOR loop with 16 threads, default(none), and a cyclic schedule */
 	#pragma omp parallel for default(none) shared(pic, width, frames, my_rank, gpu_frames) num_threads(16) schedule(static, 1)
 	for (int frame = mid_frame; frame < to_frame; frame++) {
-printf("rank %d: computing CPU frame #%d", my_rank, frame);
     	double delta = Delta * pow(.99, frame + 1);
     	const double xMin = xMid - delta;
     	const double yMin = yMid - delta;
@@ -139,13 +127,9 @@ printf("rank %d: computing CPU frame #%d", my_rank, frame);
       		}
     	}
   	}
-if(my_rank == 0)
-	printf("4");
 
 	// the following call copies the GPU's result into the beginning of the CPU's pic array
 	GPU_Fini(gpu_frames * width * width * sizeof(unsigned char), pic, pic_d);
-if(my_rank == 0)
-	printf("5");
 
 	// gathers the result from all processe
 	unsigned char* picg;
@@ -153,12 +137,11 @@ if(my_rank == 0)
 		picg = new unsigned char[comm_sz * frames * width * width];
 		MPI_Gather(pic, (frames* width * width), MPI_UNSIGNED_CHAR, picg, frames*width*width, MPI_UNSIGNED_CHAR, 0, MPI_COMM_WORLD);
 
-if(my_rank == 0)
-	printf("6");
 
 	// end time
 	gettimeofday(&end, NULL);
 	double runtime = end.tv_sec + end.tv_usec / 1000000.0 - start.tv_sec - start.tv_usec / 1000000.0;
+if(!my_rank)
 	printf("compute time: %.4f s\n", runtime);
 		MPI_Finalize();
 	// verify result by writing frames to BMP files

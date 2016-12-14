@@ -87,7 +87,6 @@ void GPU_Exec(const int from_frame, const int to_frame, const int width, unsigne
 void GPU_Fini(const int size, unsigned char pic[], unsigned char pic_d[])
 {
 	// copy the pixel data to the CPU and dealloca
-printf("GPU_Fini(%d, %p, %p);", size, pic, pic_d);
 	if(cudaSuccess != cudaMemcpy( pic, pic_d, size, cudaMemcpyDeviceToHost)) {
 		fprintf(stderr, "could not copy GPU->CPU\n"); 
 		exit(-1);
